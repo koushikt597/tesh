@@ -860,6 +860,7 @@ export default function App() {
             </div>
 
             <GoldenSphereCanvas
+              isActive={currentScreen === 'hero'}
               isAssembling={isAssemblingSphere}
               isHovered={isSphereHovered}
               holdProgress={holdProgress}

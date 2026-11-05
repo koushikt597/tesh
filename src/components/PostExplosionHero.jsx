@@ -24,7 +24,6 @@ export default function PostExplosionHero({
   const cardsContainerRef = useRef(null);
   const ctaBtnRef = useRef(null);
   const leftSideNavRef = useRef(null);
-  const rightCoordinatesRef = useRef(null);
   const bottomBarRef = useRef(null);
   const progressFillRef = useRef(null);
 
@@ -146,7 +145,7 @@ export default function PostExplosionHero({
         rotateX: -25,
       });
       gsap.set('.service-card-item', { opacity: 0, y: 70, scale: 0.92 });
-      gsap.set([leftSideNavRef.current, rightCoordinatesRef.current], { opacity: 0, x: (i) => (i === 0 ? -25 : 25) });
+      gsap.set(leftSideNavRef.current, { opacity: 0, x: -25 });
       gsap.set(ctaBtnRef.current, { opacity: 0, scale: 0.85, y: 30 });
       gsap.set(bottomBarRef.current, { opacity: 0, y: 25 });
 
@@ -171,12 +170,11 @@ export default function PostExplosionHero({
 
       // 3. Technical side interface slides into place
       tl.to(
-        [leftSideNavRef.current, rightCoordinatesRef.current],
+        leftSideNavRef.current,
         {
           opacity: 1,
           x: 0,
           duration: 0.9,
-          stagger: 0.1,
         },
         0.7
       );
@@ -242,8 +240,9 @@ export default function PostExplosionHero({
       rotateX: rotX,
       rotateY: rotY,
       transformPerspective: 900,
-      duration: 0.3,
+      duration: 0.25,
       ease: 'power1.out',
+      overwrite: 'auto',
     });
   };
 
@@ -359,19 +358,6 @@ export default function PostExplosionHero({
           })}
         </div>
         <div className="vertical-bracket-bottom" />
-      </aside>
-
-      {/* Right Side: Coordinates & Wireframe Globe Readout */}
-      <aside className="post-right-sidebar" ref={rightCoordinatesRef} aria-label="Location coordinates">
-        <div className="coords-box">
-          <span className="coord-label">COORDINATES</span>
-          <span className="coord-value">LAT 12.9716° N</span>
-          <span className="coord-value">LON 77.5946° E</span>
-          <div className="coord-status">
-            <span className="status-blink-dot" />
-            <span>GLOBAL NODE // 01</span>
-          </div>
-        </div>
       </aside>
 
       {/* ===================================================================
