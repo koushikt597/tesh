@@ -519,7 +519,9 @@ export default function App() {
   const startHold = useCallback((e) => {
     if (e) {
       if (e.button !== undefined && e.button !== 0) return; // Only primary mouse button
-      e.preventDefault();
+      if (e.cancelable && e.type !== 'touchstart') {
+        e.preventDefault();
+      }
     }
     if (currentScreen !== 'hero' || isExplodingRef.current || isHoldingRef.current) return;
 

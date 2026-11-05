@@ -442,7 +442,7 @@ export default function GoldenSphereCanvas({
     scene.add(shadowMesh);
     shadowRef.current = shadowMesh;
 
-    // 7. Mouse Listener
+    // 7. Mouse & Touch Parallax Listeners
     const handlePointerMove = (e) => {
       const normX = (e.clientX / window.innerWidth) * 2 - 1;
       const normY = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -450,6 +450,17 @@ export default function GoldenSphereCanvas({
       mouseRef.current.targetY = normY * 0.35;
     };
     window.addEventListener('mousemove', handlePointerMove, { passive: true });
+
+    const handleTouchMove = (e) => {
+      if (e.touches && e.touches[0]) {
+        const t = e.touches[0];
+        const normX = (t.clientX / window.innerWidth) * 2 - 1;
+        const normY = -(t.clientY / window.innerHeight) * 2 + 1;
+        mouseRef.current.targetX = normX * 0.45;
+        mouseRef.current.targetY = normY * 0.35;
+      }
+    };
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     // 8. Resize Listener
     const handleResize = () => {
@@ -587,6 +598,7 @@ export default function GoldenSphereCanvas({
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       cancelAnimationFrame(animFrameIdRef.current);
       window.removeEventListener('mousemove', handlePointerMove);
+      window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('resize', handleResize);
       if (container && renderer.domElement) {
         container.removeChild(renderer.domElement);

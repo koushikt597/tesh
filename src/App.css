@@ -2129,9 +2129,44 @@
 }
 
 /* =========================================================================
-   Responsive Breakpoints for Post-Explosion
+   MOBILE TOUCH & GESTURE SYSTEM
    ========================================================================= */
 
+.sphere-canvas-container,
+.sphere-interactive-hitbox,
+.dynamic-loading-track-wrapper,
+.start-circle-btn,
+.mobile-cards-stepper {
+  touch-action: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.start-btn-wrapper,
+.sound-toggle-btn,
+.primary-cta-pill,
+.post-nav-link,
+.hero-nav-link,
+.modal-close-btn,
+.modal-cta-btn,
+.modal-secondary-btn,
+.return-intro-pill,
+.stepper-dot {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Stepper pagination hidden on desktop by default */
+.mobile-cards-stepper {
+  display: none;
+}
+
+/* =========================================================================
+   COMPREHENSIVE RESPONSIVE BREAKPOINTS (DESKTOP -> TABLET -> MOBILE)
+   ========================================================================= */
+
+/* 1. Large Tablet & Small Laptop (max-width: 1200px) */
 @media (max-width: 1200px) {
   .post-cards-section {
     padding: 0 16px;
@@ -2145,6 +2180,7 @@
   }
 }
 
+/* 2. Tablet Portrait & Landscape Phone (max-width: 980px) */
 @media (max-width: 980px) {
   .post-left-sidebar,
   .post-right-sidebar {
@@ -2153,14 +2189,67 @@
 
   .cards-flex-track {
     overflow-x: auto;
-    justify-content: flex-start;
-    padding-bottom: 16px;
+    -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
+    justify-content: flex-start;
+    padding-bottom: 12px;
+    scrollbar-width: none;
+  }
+
+  .cards-flex-track::-webkit-scrollbar {
+    display: none;
   }
 
   .service-card-item {
-    flex: 0 0 220px;
+    flex: 0 0 250px;
     scroll-snap-align: center;
+  }
+
+  .mobile-cards-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 12px;
+    margin-bottom: 18px;
+  }
+
+  .stepper-dot {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 4px;
+  }
+
+  .stepper-dot-label {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    color: rgba(8, 7, 6, 0.4);
+    letter-spacing: 0.1em;
+    transition: color 0.25s ease;
+  }
+
+  .stepper-dot-fill {
+    width: 20px;
+    height: 3px;
+    border-radius: 9999px;
+    background: rgba(8, 7, 6, 0.15);
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+  }
+
+  .stepper-dot.active .stepper-dot-label {
+    color: #D99A35;
+  }
+
+  .stepper-dot.active .stepper-dot-fill {
+    width: 36px;
+    background: linear-gradient(90deg, #D99A35, #FFC65C);
+    box-shadow: 0 0 8px rgba(217, 154, 53, 0.45);
   }
 
   .modal-grid-details {
@@ -2169,61 +2258,355 @@
   }
 }
 
-@media (max-width: 640px) {
-  .post-exp-nav {
+/* 3. Mobile Phones & Small Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+  /* SCREEN 1: INTRO */
+  .landing-viewport {
+    padding: 20px 16px;
+  }
+
+  .headline-composition {
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .headline-word {
+    font-size: clamp(3.2rem, 16vw, 5.2rem);
+    line-height: 0.88;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .start-btn-wrapper {
+    padding: 10px 0;
+  }
+
+  .start-btn-outer-ring {
+    width: 96px;
+    height: 96px;
+  }
+
+  .start-circle-btn {
+    width: 80px;
+    height: 80px;
+  }
+
+  .start-btn-text {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+  }
+
+  .headline-arrow-wrapper {
+    margin-left: 0;
+    margin-top: 4px;
+  }
+
+  .headline-arrow {
+    width: 48px;
+  }
+
+  .bottom-dock {
+    margin-bottom: 20px;
+  }
+
+  .sound-toggle-btn {
+    padding: 8px 18px;
+    font-size: 10.5px;
+  }
+
+  .bottom-message {
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    max-width: 92vw;
+  }
+
+  /* SCREEN 2: 3D SPHERE HERO */
+  .hero-header {
     padding: 16px 20px;
   }
-  
-  .post-nav-links {
+
+  .hero-brand {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+  }
+
+  .hero-brand-tag {
+    font-size: 8px;
+    padding: 2px 6px;
+  }
+
+  .hero-nav {
     gap: 12px;
   }
 
-  .post-hero-headline {
-    font-size: clamp(2.4rem, 11vw, 4.4rem);
-    column-gap: 12px;
-  }
-
-  .service-modal-panel {
-    padding: 24px 20px;
-  }
-}
-
-/* =========================================================================
-   Responsive Breakpoints
-   ========================================================================= */
-
-@media (max-width: 768px) {
-  .hero-header {
-    padding: 20px 24px;
-  }
-  
-  .hero-nav {
-    gap: 16px;
+  .hero-nav-link {
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    padding: 4px;
   }
 
   .hero-headline {
-    font-size: clamp(3.2rem, 13vw, 5.8rem);
+    font-size: clamp(2.8rem, 14vw, 5.2rem);
     white-space: normal;
-    line-height: 0.9;
+    line-height: 0.88;
+    text-align: center;
   }
 
   .hero-bottom {
-    margin-bottom: 22px;
+    margin-bottom: 18px;
+    padding: 0 16px;
+  }
+
+  .dynamic-loading-hud-row {
+    margin-bottom: 8px;
+  }
+
+  .hud-status-col .hud-phase-label {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+  }
+
+  .hud-idle-prompt {
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+
+  .hud-timer-num {
+    font-size: 22px;
+  }
+
+  .hud-percent-col {
+    font-size: 10.5px;
+    min-width: 34px;
+  }
+
+  .hero-bottom-subrow {
+    margin-top: 10px;
+    justify-content: center;
+  }
+
+  .hero-bottom-subrow .subrow-tech-tag {
+    display: none;
+  }
+
+  .return-intro-pill {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    padding: 6px 12px;
+  }
+
+  /* SCREEN 3: POST-EXPLOSION LANDING PAGE */
+  .post-exp-nav {
+    padding: 14px 18px;
+  }
+
+  .post-nav-logo {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+  }
+
+  .post-nav-links {
+    gap: 8px;
+  }
+
+  .post-nav-link {
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    padding: 4px;
+  }
+
+  .post-hero-headline {
+    font-size: clamp(2.2rem, 10vw, 3.8rem);
+    column-gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  .post-cards-section {
+    padding: 0 16px;
+    width: 100%;
+  }
+
+  .cards-flex-track {
+    gap: 14px;
+    padding: 8px 16px 16px 16px;
+  }
+
+  .service-card-item {
+    flex: 0 0 calc(84vw - 32px);
+    max-width: 320px;
+    min-width: 240px;
+    padding: 20px 16px;
+    min-height: 250px;
+  }
+
+  .post-cta-section {
+    margin-top: 8px;
+    margin-bottom: 20px;
+  }
+
+  .primary-cta-pill {
+    padding: 13px 26px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+  }
+
+  .post-bottom-bar {
+    padding: 12px 16px 18px 16px;
+  }
+
+  .bottom-tagline {
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+
+  .post-bottom-row {
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+
+  /* Modals on Mobile */
+  .service-modal-overlay {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  .service-modal-panel {
+    max-height: 86vh;
+    padding: 22px 18px;
+    border-radius: 20px 20px 14px 14px;
+    gap: 16px;
+  }
+
+  .modal-title {
+    font-size: 1.55rem;
+  }
+
+  .modal-subtitle {
+    font-size: 11.5px;
+  }
+
+  .modal-full-desc {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .modal-cta-btn {
+    justify-content: center;
+    width: 100%;
+    padding: 13px 20px;
+  }
+
+  .modal-secondary-btn {
+    text-align: center;
+    width: 100%;
+    padding: 8px;
   }
 }
 
+/* 4. Compact Smartphones (max-width: 480px) */
 @media (max-width: 480px) {
-  .hero-nav-link:nth-child(2) {
-    display: none;
-  }
-  
-  .hero-headline {
-    font-size: clamp(2.8rem, 14vw, 4.4rem);
+  .hero-header {
+    padding: 12px 16px;
   }
 
-  .hero-tagline {
-    font-size: 9.5px;
-    letter-spacing: 0.14em;
+  .hero-brand {
+    font-size: 11.5px;
+  }
+
+  .hero-nav {
+    gap: 8px;
+  }
+
+  .hero-nav-link {
+    font-size: 9px;
+    letter-spacing: 0.08em;
+  }
+
+  .hero-headline {
+    font-size: clamp(2.3rem, 14vw, 3.8rem);
+  }
+
+  .hud-status-col .hud-phase-label {
+    font-size: 7.5px;
+    letter-spacing: 0.06em;
+  }
+
+  .hud-idle-prompt {
+    font-size: 8px;
+    letter-spacing: 0.06em;
+  }
+
+  .hud-timer-num {
+    font-size: 19px;
+  }
+
+  .track-bracket {
+    font-size: 13px;
+  }
+
+  .post-nav-logo {
+    font-size: 11px;
+  }
+
+  .post-nav-links {
+    gap: 6px;
+  }
+
+  .post-nav-link {
+    font-size: 8.5px;
+    letter-spacing: 0.06em;
+  }
+
+  .service-card-item {
+    flex: 0 0 calc(90vw - 32px);
+    max-width: 300px;
+    min-width: 220px;
+  }
+}
+
+/* 5. Mobile Landscape Orientation (short screens) */
+@media (max-height: 540px) and (orientation: landscape) {
+  .headline-composition {
+    flex-direction: row;
+    gap: 14px;
+  }
+
+  .headline-word {
+    font-size: 2.8rem;
+  }
+
+  .start-btn-outer-ring {
+    width: 72px;
+    height: 72px;
+  }
+
+  .start-circle-btn {
+    width: 60px;
+    height: 60px;
+  }
+
+  .bottom-dock {
+    margin-bottom: 10px;
+  }
+
+  .hero-bottom {
+    margin-bottom: 10px;
+  }
+
+  .service-card-item {
+    min-height: 200px;
   }
 }
 

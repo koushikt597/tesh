@@ -22,6 +22,7 @@ export default function PostExplosionHero({
   const headlineToRef = useRef(null);
   const headlineExpRef = useRef(null);
   const cardsContainerRef = useRef(null);
+  const cardsTrackRef = useRef(null);
   const ctaBtnRef = useRef(null);
   const leftSideNavRef = useRef(null);
   const bottomBarRef = useRef(null);
@@ -226,8 +227,9 @@ export default function PostExplosionHero({
     return () => ctx.revert();
   }, []);
 
-  // Card Mouse Hover 3D Tilt calculation
+  // Card Mouse Hover 3D Tilt calculation (Desktop only)
   const handleCardMouseMove = (e) => {
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(hover: none)').matches) return;
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
@@ -254,6 +256,33 @@ export default function PostExplosionHero({
       duration: 0.6,
       ease: 'power2.out',
     });
+  };
+
+  // Mobile horizontal swipe observer for service cards
+  const handleCardsTrackScroll = () => {
+    if (!cardsTrackRef.current) return;
+    const track = cardsTrackRef.current;
+    const scrollLeft = track.scrollLeft;
+    const firstCard = track.firstElementChild;
+    const cardWidth = firstCard ? firstCard.offsetWidth : 260;
+    const gap = 14;
+    const newIdx = Math.round(scrollLeft / (cardWidth + gap));
+    if (newIdx >= 0 && newIdx < services.length && newIdx !== activeCardIndex) {
+      setActiveCardIndex(newIdx);
+    }
+  };
+
+  // Jump smoothly to a specific card on mobile
+  const scrollToCard = (index) => {
+    setActiveCardIndex(index);
+    if (cardsTrackRef.current) {
+      const track = cardsTrackRef.current;
+      const targetCard = track.children[index];
+      if (targetCard) {
+        targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+    if (soundOn) soundManager.playHoverTick();
   };
 
   return (
@@ -387,7 +416,11 @@ export default function PostExplosionHero({
 
         {/* Floating 3D Service Cards */}
         <section className="post-cards-section" ref={cardsContainerRef} aria-label="Services showcase">
-          <div className="cards-flex-track">
+          <div
+            className="cards-flex-track"
+            ref={cardsTrackRef}
+            onScroll={handleCardsTrackScroll}
+          >
             {services.map((srv, idx) => {
               const isHovered = hoveredCardIndex === idx;
               const isCenter = idx === 2; // AI Solutions is prominent
@@ -446,6 +479,22 @@ export default function PostExplosionHero({
                 </article>
               );
             })}
+          </div>
+
+          {/* Mobile Stepper pagination dots */}
+          <div className="mobile-cards-stepper" aria-label="Services carousel navigation">
+            {services.map((srv, idx) => (
+              <button
+                key={srv.id}
+                type="button"
+                className={`stepper-dot ${activeCardIndex === idx ? 'active' : ''}`}
+                onClick={() => scrollToCard(idx)}
+                aria-label={`Jump to service ${srv.id}: ${srv.title}`}
+              >
+                <span className="stepper-dot-label">{srv.id}</span>
+                <span className="stepper-dot-fill" />
+              </button>
+            ))}
           </div>
         </section>
 
