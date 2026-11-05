@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import PostExplosionCanvas from './PostExplosionCanvas';
 import { soundManager } from '../audio';
 
 export default function PostExplosionHero({
@@ -15,8 +14,6 @@ export default function PostExplosionHero({
   const [showWorkModal, setShowWorkModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
   const [progressPercent, setProgressPercent] = useState(0);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [scrollProgress, setScrollProgress] = useState(0);
 
   // DOM Refs for GSAP Entry Sequence
   const containerRef = useRef(null);
@@ -135,30 +132,6 @@ export default function PostExplosionHero({
       tag: 'UI/UX & WEB',
     },
   ];
-
-  // Mouse Parallax Listener
-  const handlePointerMove = useCallback((e) => {
-    const normX = (e.clientX / window.innerWidth) * 2 - 1;
-    const normY = -(e.clientY / window.innerHeight) * 2 + 1;
-    setMousePos({ x: normX, y: normY });
-  }, []);
-
-  // Scroll Listener
-  useEffect(() => {
-    const handleScroll = () => {
-      const el = containerRef.current;
-      if (!el) return;
-      const total = el.scrollHeight - el.clientHeight;
-      const progress = total > 0 ? Math.min(el.scrollTop / total, 1.0) : 0;
-      setScrollProgress(progress);
-    };
-
-    const node = containerRef.current;
-    if (node) {
-      node.addEventListener('scroll', handleScroll, { passive: true });
-    }
-    return () => node?.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // =========================================================================
   // CINEMATIC ENTRY ANIMATION (GSAP Timeline)
@@ -288,12 +261,8 @@ export default function PostExplosionHero({
     <div
       className="post-explosion-landing"
       ref={containerRef}
-      onPointerMove={handlePointerMove}
       aria-label="Tesh Media — Post-Explosion Dynamic Landing Page"
     >
-      {/* 3D WebGL Background Canvas: Concentric Energy Rings, Liquid Gold Ribbons, Wireframe Globe & Particles */}
-      <PostExplosionCanvas isEntered={true} mousePos={mousePos} scrollProgress={scrollProgress} />
-
       {/* Fine Architectural Grid & Minimal Crosshairs */}
       <div className="post-exp-grid-overlay" aria-hidden="true" />
       <span className="post-crosshair post-crosshair-tl" aria-hidden="true">+</span>
