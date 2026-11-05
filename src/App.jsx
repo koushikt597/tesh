@@ -871,54 +871,109 @@ export default function App() {
           </div>
         </div>
 
-        {/* Bottom Section: 3-Second Countdown & Progress Line */}
+        {/* Bottom Section: 3-Second Cinematic Dynamic Loading Bar & HUD */}
         <footer className="hero-bottom" ref={heroBottomRef}>
-          {/* Dynamic 3-Second Countdown HUD */}
-          {isHolding && countdownNumber !== null ? (
-            <div className="countdown-container" aria-live="polite">
-              <div className="countdown-number" key={countdownNumber}>
-                <span>{countdownNumber}</span>
-                <span className="countdown-accent">S</span>
-              </div>
-              <div className="countdown-subtext">
-                <span className="countdown-pulse-dot" />
-                <span>CHARGING ENERGY...</span>
-              </div>
+          {/* Top HUD Row: Status, Phase & Live 3-Second Countdown */}
+          <div className={`dynamic-loading-hud-row ${isHolding ? 'is-holding' : ''}`}>
+            <div className="hud-status-col">
+              <span className={`hud-pulse-light ${isHolding ? 'pulsing' : ''}`} />
+              <span className="hud-phase-label">
+                {isHolding ? `CHARGING CORE // STAGE 0${countdownNumber || 1}` : 'HOLD TO IGNITE // 3.0S'}
+              </span>
             </div>
-          ) : (
-            <p className="hero-tagline">
-              HOLD SPHERE FOR 3 SECONDS OR PRESS SPACEBAR
-            </p>
-          )}
 
-          {/* Functional Animated Progress Line */}
+            <div className="hud-countdown-col">
+              {isHolding ? (
+                <div className="hud-timer-badge">
+                  <span className="hud-timer-num">{countdownNumber}</span>
+                  <span className="hud-timer-unit">S</span>
+                  <span className="hud-timer-ms">
+                    {`(${Math.max(0, (1 - holdProgress) * 3).toFixed(1)}s)`}
+                  </span>
+                </div>
+              ) : (
+                <span className="hud-idle-prompt">
+                  HOLD SPHERE FOR 3 SECONDS OR PRESS SPACEBAR
+                </span>
+              )}
+            </div>
+
+            <div className="hud-percent-col">
+              <span className="hud-percent-val">
+                {isHolding ? `${Math.round(holdProgress * 100)}%` : `${introProgressPercent}%`}
+              </span>
+            </div>
+          </div>
+
+          {/* Dynamic Laser Loading Bar Track */}
           <div
-            className={`progress-line-track ${isHolding ? 'holding' : ''}`}
+            className={`dynamic-loading-track-wrapper ${isHolding ? 'holding' : ''} ${holdProgress > 0.66 ? 'high-energy' : ''}`}
+            onPointerDown={startHold}
+            onPointerUp={cancelHold}
+            onPointerLeave={cancelHold}
+            onTouchStart={startHold}
+            onTouchEnd={cancelHold}
+            onTouchCancel={cancelHold}
             role="progressbar"
             aria-valuenow={Math.round(holdProgress * 100)}
             aria-valuemin="0"
             aria-valuemax="100"
-            onPointerDown={startHold}
-            onPointerUp={cancelHold}
-            title={isHolding ? `Charging: ${Math.round(holdProgress * 100)}%` : 'Hold to charge'}
+            title="Press and hold 3 seconds to ignite sphere explosion"
           >
-            <div
-              className="progress-line-fill"
-              ref={progressFillRef}
-              style={{
-                width: isHolding || holdProgress > 0 ? `${holdProgress * 100}%` : `${introProgressPercent}%`,
-              }}
-            />
+            {/* Tech Bracket Left */}
+            <span className="track-bracket bracket-left">[</span>
+
+            <div className="dynamic-loading-track">
+              {/* Idle Scanner Light Sweep */}
+              {!isHolding && <div className="track-scanner-sweep" aria-hidden="true" />}
+
+              {/* Dynamic Progress Fill with Leading Energy Bead */}
+              <div
+                className="dynamic-loading-fill"
+                ref={progressFillRef}
+                style={{
+                  width: isHolding || holdProgress > 0 ? `${holdProgress * 100}%` : `${introProgressPercent}%`,
+                }}
+              >
+                {/* Traveling Energy Shimmer */}
+                <div className="fill-energy-shimmer" aria-hidden="true" />
+
+                {/* Leading Spark Bead at the head of the progress bar */}
+                {(isHolding || holdProgress > 0) && (
+                  <div className="leading-spark-bead" aria-hidden="true">
+                    <div className="spark-core" />
+                    <div className="spark-flare" />
+                  </div>
+                )}
+              </div>
+
+              {/* Track Segment Measurement Ticks (0%, 25%, 50%, 75%, 100%) */}
+              <div className="track-ticks-layer" aria-hidden="true">
+                <span className="track-tick" style={{ left: '0%' }} />
+                <span className="track-tick" style={{ left: '25%' }} />
+                <span className="track-tick" style={{ left: '50%' }} />
+                <span className="track-tick" style={{ left: '75%' }} />
+                <span className="track-tick" style={{ left: '100%' }} />
+              </div>
+            </div>
+
+            {/* Tech Bracket Right */}
+            <span className="track-bracket bracket-right">]</span>
           </div>
 
-          <button
-            type="button"
-            className="return-intro-pill"
-            onClick={handleReturnToIntro}
-            aria-label="Return to Intro Screen"
-          >
-            ← RETURN TO INTRO SCREEN
-          </button>
+          {/* Bottom Subrow: Technical Calibration & Return Button */}
+          <div className="hero-bottom-subrow">
+            <span className="subrow-tech-tag">CALIBRATION: 3000MS</span>
+            <button
+              type="button"
+              className="return-intro-pill"
+              onClick={handleReturnToIntro}
+              aria-label="Return to Intro Screen"
+            >
+              ← RETURN TO INTRO SCREEN
+            </button>
+            <span className="subrow-tech-tag">STATUS // ACTIVE</span>
+          </div>
         </footer>
       </section>
 

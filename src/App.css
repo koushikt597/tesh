@@ -675,133 +675,315 @@
   z-index: 25;
 }
 
-/* 3-Second Cinematic Countdown HUD */
-.countdown-container {
+/* =========================================================================
+   DYNAMIC 3-SECOND LOADING BAR & HUD (SCREEN 2)
+   ========================================================================= */
+
+.dynamic-loading-hud-row {
+  width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   margin-bottom: 12px;
-  min-height: 48px;
+  font-family: var(--font-mono);
+  transition: transform 0.25s ease;
 }
 
-.countdown-number {
-  font-family: var(--font-mono);
-  font-size: clamp(28px, 4vw, 44px);
+.hud-status-col {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
   font-weight: 700;
-  line-height: 1;
-  color: var(--color-hero-text);
-  letter-spacing: -0.02em;
+  letter-spacing: 0.16em;
+  color: #8c671a;
+  text-transform: uppercase;
+}
+
+.hud-pulse-light {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #D99A35;
+  box-shadow: 0 0 6px rgba(217, 154, 53, 0.6);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dynamic-loading-hud-row.is-holding .hud-pulse-light {
+  background: #FFC65C;
+  box-shadow: 0 0 12px #FFC65C, 0 0 20px #D99A35;
+  animation: hudFlash 0.35s infinite alternate;
+}
+
+@keyframes hudFlash {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  100% { transform: scale(1.4); opacity: 1; }
+}
+
+.hud-countdown-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hud-timer-badge {
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
   animation: countdownPulse 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.countdown-accent {
-  color: var(--color-gold-primary);
-  font-size: 0.6em;
+.hud-timer-num {
+  font-family: var(--font-mono);
+  font-size: clamp(22px, 3.2vw, 32px);
+  font-weight: 900;
+  line-height: 1;
+  color: #080706;
+  letter-spacing: -0.02em;
+}
+
+.hud-timer-unit {
+  font-size: 14px;
+  font-weight: 700;
+  color: #D99A35;
   letter-spacing: 0.1em;
 }
 
-@keyframes countdownPulse {
-  0% {
-    transform: scale(1.4);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.countdown-subtext {
-  font-family: var(--font-mono);
+.hud-timer-ms {
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--color-gold-primary);
-  margin-top: 4px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  color: #8c671a;
+  letter-spacing: 0.08em;
 }
 
-.countdown-pulse-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--color-gold-primary);
-  display: inline-block;
-  animation: pulseDot 1s infinite alternate;
-}
-
-@keyframes pulseDot {
-  0% { transform: scale(0.8); opacity: 0.4; }
-  100% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 8px var(--color-gold-primary); }
-}
-
-/* Idle Tagline when not holding */
-.hero-tagline {
+.hud-idle-prompt {
   font-family: var(--font-mono);
-  font-size: clamp(10px, 1.1vw, 12px);
+  font-size: clamp(10px, 1.1vw, 11.5px);
   font-weight: 700;
   letter-spacing: 0.18em;
-  color: var(--color-hero-text);
+  color: rgba(8, 7, 6, 0.85);
   text-transform: uppercase;
-  margin-bottom: 14px;
   text-align: center;
   transition: opacity 0.3s ease;
 }
 
-/* Functional Progress Line */
-.progress-line-track {
+.hud-percent-col {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #D99A35;
+  min-width: 44px;
+  text-align: right;
+}
+
+/* Dynamic Loading Bar Track & Brackets */
+.dynamic-loading-track-wrapper {
   position: relative;
   width: 100%;
-  height: 2px;
-  background: rgba(0, 0, 0, 0.08);
-  border-radius: 2px;
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   cursor: pointer;
-  transition: height 0.25s ease, background-color 0.25s ease;
+  user-select: none;
+  padding: 6px 0;
+  transition: transform 0.25s ease;
 }
 
-.progress-line-track.holding {
+.track-bracket {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: rgba(217, 154, 53, 0.65);
+  line-height: 1;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.dynamic-loading-track-wrapper:hover .track-bracket {
+  color: #D99A35;
+}
+
+.dynamic-loading-track-wrapper.holding .track-bracket {
+  color: #FFC65C;
+  transform: scale(1.15);
+}
+
+.dynamic-loading-track {
+  position: relative;
+  flex: 1;
   height: 4px;
-  background: rgba(0, 0, 0, 0.14);
+  background: rgba(8, 7, 6, 0.1);
+  border-radius: 9999px;
+  overflow: visible;
+  transition: 
+    height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
-.progress-line-fill {
+.dynamic-loading-track-wrapper.holding .dynamic-loading-track {
+  height: 8px;
+  background: rgba(217, 154, 53, 0.2);
+  box-shadow: 
+    0 0 20px rgba(217, 154, 53, 0.4),
+    0 0 40px rgba(255, 198, 92, 0.2);
+}
+
+.dynamic-loading-track-wrapper.high-energy .dynamic-loading-track {
+  height: 10px;
+  box-shadow: 
+    0 0 28px rgba(255, 198, 92, 0.7),
+    0 0 50px rgba(217, 154, 53, 0.4);
+  animation: trackVibrate 0.07s infinite alternate;
+}
+
+@keyframes trackVibrate {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-1px); }
+}
+
+/* Idle Scanner Sweep */
+.track-scanner-sweep {
+  position: absolute;
+  top: 0;
+  left: -20%;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(217, 154, 53, 0.8), transparent);
+  border-radius: 9999px;
+  animation: idleScanner 3.2s infinite ease-in-out;
+}
+
+@keyframes idleScanner {
+  0% { left: -30%; }
+  50%, 100% { left: 110%; }
+}
+
+/* Dynamic Glowing Progress Fill */
+.dynamic-loading-fill {
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #B88A30 0%, var(--color-gold-primary) 70%, var(--color-gold-champagne) 100%);
-  border-radius: 2px;
-  box-shadow: 0 0 8px rgba(214, 166, 75, 0.6);
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #b87a1d 0%, #D99A35 40%, #FFC65C 80%, #FFFFFF 100%);
+  box-shadow: 
+    0 0 12px rgba(255, 198, 92, 0.85),
+    0 0 24px rgba(217, 154, 53, 0.5);
+  overflow: visible;
   transition: width 0.05s linear;
+  will-change: width;
 }
 
-/* Subtle Back Indicator (allows smooth return to screen 1) */
-.return-intro-pill {
+/* Diagonal Energy Rush */
+.fill-energy-shimmer {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+  animation: energyRushing 0.75s linear infinite;
+}
+
+@keyframes energyRushing {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Leading Spark Bead at the head of the fill */
+.leading-spark-bead {
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.spark-core {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 
+    0 0 8px #FFFFFF,
+    0 0 16px #FFC65C,
+    0 0 26px #D99A35;
+}
+
+.spark-flare {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 198, 92, 0.6) 45%, transparent 75%);
+  animation: sparkTwinkle 0.25s infinite alternate;
+}
+
+@keyframes sparkTwinkle {
+  0% { transform: scale(0.85); opacity: 0.7; }
+  100% { transform: scale(1.35); opacity: 1; }
+}
+
+/* Calibration Ticks Layer */
+.track-ticks-layer {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  height: 5px;
+  pointer-events: none;
+}
+
+.track-tick {
+  position: absolute;
+  width: 1px;
+  height: 4px;
+  background: rgba(8, 7, 6, 0.2);
+  transform: translateX(-50%);
+  transition: background-color 0.25s ease;
+}
+
+.dynamic-loading-track-wrapper.holding .track-tick {
+  background: rgba(217, 154, 53, 0.5);
+}
+
+/* Bottom Subrow */
+.hero-bottom-subrow {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-top: 14px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  color: rgba(8, 7, 6, 0.45);
+}
+
+.subrow-tech-tag {
+  font-weight: 600;
+}
+
+/* Subtle Back Indicator */
+.return-intro-pill {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(0, 0, 0, 0.45);
+  color: rgba(8, 7, 6, 0.55);
   background: none;
   border: none;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .return-intro-pill:hover {
-  color: #000000;
+  color: #080706;
+  transform: translateX(-2px);
 }
-
 
 /* =========================================================================
    SCREEN 3: NEXT TEMPLATE TRANSITION PLACEHOLDER CONTAINER
