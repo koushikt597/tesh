@@ -11,9 +11,8 @@ export default function App() {
   const [soundOn, setSoundOn] = useState(false);
   const [isAssemblingSphere, setIsAssemblingSphere] = useState(false);
   const [isSphereHovered, setIsSphereHovered] = useState(false);
-  const [introProgressPercent, setIntroProgressPercent] = useState(0);
 
-  // 3-Second Interactive Hold & Explosion States
+  // 3-Second Interactive Hold & Explosion States (Starts at 0%, charges to 100% on hold)
   const [isHolding, setIsHolding] = useState(false);
   const [holdProgress, setHoldProgress] = useState(0); // 0.0 to 1.0
   const [countdownNumber, setCountdownNumber] = useState(null); // 3 | 2 | 1 | null
@@ -54,12 +53,18 @@ export default function App() {
   const isTransitioningRef = useRef(false);
   const holdStartTimestampRef = useRef(0);
   const holdAnimFrameRef = useRef(null);
+  const holdProgressRef = useRef(0);
+  const cancelTweenRef = useRef(null);
   const isHoldingRef = useRef(false);
   const isExplodingRef = useRef(false);
 
   useEffect(() => {
     isHoldingRef.current = isHolding;
   }, [isHolding]);
+
+  useEffect(() => {
+    holdProgressRef.current = holdProgress;
+  }, [holdProgress]);
 
   useEffect(() => {
     isExplodingRef.current = isExploding;
@@ -346,6 +351,12 @@ export default function App() {
         opacity: 0,
         scale: 0.6,
       });
+      if (progressFillRef.current) {
+        gsap.set(progressFillRef.current, { clearProps: 'width' });
+      }
+      setHoldProgress(0);
+      holdProgressRef.current = 0;
+      setCountdownNumber(null);
     }, '-=0.2');
 
     tl.to(heroHeadlineRef.current, {
@@ -374,31 +385,26 @@ export default function App() {
       y: 0,
       duration: 0.85,
       ease: 'power2.out',
-    }, '-=0.7')
-    .fromTo(
-      progressFillRef.current,
-      { width: '0%' },
-      {
-        width: '100%',
-        duration: 1.8,
-        ease: 'power1.inOut',
-        onUpdate: function () {
-          setIntroProgressPercent(Math.round(this.progress() * 100));
-        },
-      },
-      '-=1.4'
-    );
+    }, '-=0.7');
   };
 
   // Return to Intro screen
   const handleReturnToIntro = () => {
+    if (cancelTweenRef.current) {
+      cancelTweenRef.current.kill();
+      cancelTweenRef.current = null;
+    }
     isTransitioningRef.current = false;
     setCurrentScreen('intro');
     setIsAssemblingSphere(false);
     setIsHolding(false);
     setHoldProgress(0);
+    holdProgressRef.current = 0;
     setCountdownNumber(null);
     setIsExploding(false);
+    if (progressFillRef.current) {
+      gsap.set(progressFillRef.current, { clearProps: 'width' });
+    }
 
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
@@ -517,6 +523,11 @@ export default function App() {
     }
     if (currentScreen !== 'hero' || isExplodingRef.current || isHoldingRef.current) return;
 
+    if (cancelTweenRef.current) {
+      cancelTweenRef.current.kill();
+      cancelTweenRef.current = null;
+    }
+
     setIsHolding(true);
     setIsResetting(false);
     setCountdownNumber(3);
@@ -532,6 +543,7 @@ export default function App() {
       const elapsed = currentTime - holdStartTimestampRef.current;
       const progress = Math.min(elapsed / durationMs, 1.0);
       setHoldProgress(progress);
+      holdProgressRef.current = progress;
 
       // 3-Second Countdown Logic: 3 -> 2 -> 1
       if (elapsed < 1000) {
@@ -567,21 +579,28 @@ export default function App() {
 
     setIsHolding(false);
 
-    // Smooth reverse back to original sphere configuration
-    const currentP = holdProgress;
-    gsap.to({ val: currentP }, {
+    // Smooth reverse back to 0%
+    const currentP = holdProgressRef.current;
+    if (cancelTweenRef.current) {
+      cancelTweenRef.current.kill();
+    }
+    cancelTweenRef.current = gsap.to({ val: currentP }, {
       val: 0,
       duration: 0.45,
       ease: 'power2.out',
       onUpdate: function () {
-        setHoldProgress(this.targets()[0].val);
+        const val = this.targets()[0].val;
+        setHoldProgress(val);
+        holdProgressRef.current = val;
       },
       onComplete: () => {
         setHoldProgress(0);
+        holdProgressRef.current = 0;
         setCountdownNumber(null);
+        cancelTweenRef.current = null;
       },
     });
-  }, [holdProgress, soundOn]);
+  }, [soundOn]);
 
   // Reusable Transition Controller as requested: startNextTemplateTransition()
   const startNextTemplateTransition = useCallback(() => {
@@ -605,10 +624,18 @@ export default function App() {
 
   // Reset from Next Template back to 3D Hero Screen
   const handleResetFromNextTemplate = () => {
+    if (cancelTweenRef.current) {
+      cancelTweenRef.current.kill();
+      cancelTweenRef.current = null;
+    }
     setIsResetting(true);
     setIsExploding(false);
     setIsHolding(false);
     setHoldProgress(0);
+    holdProgressRef.current = 0;
+    if (progressFillRef.current) {
+      gsap.set(progressFillRef.current, { clearProps: 'width' });
+    }
     setCountdownNumber(null);
     setCurrentScreen('hero');
 
@@ -900,7 +927,7 @@ export default function App() {
 
             <div className="hud-percent-col">
               <span className="hud-percent-val">
-                {isHolding ? `${Math.round(holdProgress * 100)}%` : `${introProgressPercent}%`}
+                {`${Math.round(holdProgress * 100)}%`}
               </span>
             </div>
           </div>
@@ -925,18 +952,20 @@ export default function App() {
 
             <div className="dynamic-loading-track">
               {/* Idle Scanner Light Sweep */}
-              {!isHolding && <div className="track-scanner-sweep" aria-hidden="true" />}
+              {!isHolding && holdProgress === 0 && (
+                <div className="track-scanner-sweep" aria-hidden="true" />
+              )}
 
               {/* Dynamic Progress Fill with Leading Energy Bead */}
               <div
                 className="dynamic-loading-fill"
                 ref={progressFillRef}
                 style={{
-                  width: isHolding || holdProgress > 0 ? `${holdProgress * 100}%` : `${introProgressPercent}%`,
+                  width: `${holdProgress * 100}%`,
                 }}
               >
                 {/* Traveling Energy Shimmer */}
-                <div className="fill-energy-shimmer" aria-hidden="true" />
+                {isHolding && <div className="fill-energy-shimmer" aria-hidden="true" />}
 
                 {/* Leading Spark Bead at the head of the progress bar */}
                 {(isHolding || holdProgress > 0) && (
