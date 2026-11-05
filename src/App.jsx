@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { soundManager } from './audio';
 import GoldenSphereCanvas from './components/GoldenSphereCanvas';
+import PostExplosionHero from './components/PostExplosionHero';
 import './App.css';
 
 export default function App() {
@@ -586,7 +587,7 @@ export default function App() {
   const startNextTemplateTransition = useCallback(() => {
     setCurrentScreen('next-template');
 
-    // Reveal the clean placeholder container for the next template
+    // Reveal the dynamic post-explosion landing page
     if (nextTemplateRef.current) {
       gsap.set(nextTemplateRef.current, {
         visibility: 'visible',
@@ -596,21 +597,9 @@ export default function App() {
 
       gsap.to(nextTemplateRef.current, {
         opacity: 1,
-        duration: 0.9,
+        duration: 0.8,
         ease: 'power2.out',
       });
-
-      gsap.fromTo(
-        '.next-template-content > *',
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          stagger: 0.1,
-          duration: 0.8,
-          ease: 'power3.out',
-        }
-      );
     }
   }, []);
 
@@ -933,29 +922,18 @@ export default function App() {
       </section>
 
       {/* ===================================================================
-          SCREEN 3: CLEAN PLACEHOLDER CONTAINER FOR NEXT TEMPLATE
+          STAGE 3: DYNAMIC POST-EXPLOSION LANDING PAGE & 3D SYSTEM
           =================================================================== */}
       <section
         className={`next-template-viewport ${currentScreen === 'next-template' ? 'visible' : ''}`}
         ref={nextTemplateRef}
-        aria-label="Next Template Transition Area"
+        aria-label="Tesh Media — Post-Explosion Dynamic Landing Page"
       >
-        <div className="next-template-content">
-          <span className="next-template-badge">TESH MEDIA — TEMPLATE TRANSITION</span>
-          <h2 className="next-template-title">SEQUENCE ACTIVATED</h2>
-          <p className="next-template-desc">
-            The 3D golden sphere explosion completed successfully. The transition controller is now active and ready for your next template integration.
-          </p>
-          <button
-            type="button"
-            className="next-template-reset-btn"
-            onClick={handleResetFromNextTemplate}
-            aria-label="Replay sequence and restore 3D golden sphere"
-          >
-            <span>↺</span>
-            <span>RESTORE 3D SPHERE & REPLAY</span>
-          </button>
-        </div>
+        <PostExplosionHero
+          onReplay={handleResetFromNextTemplate}
+          soundOn={soundOn}
+          onToggleSound={handleToggleSound}
+        />
       </section>
     </div>
   );
