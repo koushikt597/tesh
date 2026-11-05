@@ -8,7 +8,12 @@ export default function PostExplosionHero({
   onToggleSound,
 }) {
   // Active states
-  const [activeCardIndex, setActiveCardIndex] = useState(2); // Card 03 (AI Solutions) default
+  const [activeCardIndex, setActiveCardIndex] = useState(() => {
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      return 0; // First card 01 on mobile view
+    }
+    return 2; // Card 03 (AI Solutions) default on desktop
+  });
   const [hoveredCardIndex, setHoveredCardIndex] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
   const [showWorkModal, setShowWorkModal] = useState(false);
