@@ -1,4 +1,4 @@
-// Web Audio API ambient, UI, and cinematic physics sound generator for Tesh Digitals
+// Web Audio API ambient, UI, and cinematic physics sound generator for Tesh Media
 // Purely programmatic, zero external dependencies, robust high-fidelity audio levels.
 
 class SoundManager {

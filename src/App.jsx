@@ -687,7 +687,7 @@ export default function App() {
       <section
         className={`landing-viewport ${currentScreen !== 'intro' ? 'fade-out' : ''}`}
         ref={introViewportRef}
-        aria-label="Tesh Digitals Intro Screen"
+        aria-label="Tesh Media Intro Screen"
       >
         <div className="ambient-glow" aria-hidden="true" />
         <div className="noise-overlay" aria-hidden="true" />
@@ -800,7 +800,7 @@ export default function App() {
       <section
         className={`hero-viewport ${currentScreen === 'hero' ? 'visible' : ''}`}
         ref={heroViewportRef}
-        aria-label="Tesh Digitals 3D Hero Screen"
+        aria-label="Tesh Media 3D Hero Screen"
       >
         <div className="hero-grid-background" aria-hidden="true" />
         <div className="hero-floor-lighting" ref={heroFloorLightRef} aria-hidden="true" />
@@ -818,9 +818,9 @@ export default function App() {
             ref={heroBrandRef}
             onClick={handleReturnToIntro}
             title="Click to return to Intro screen"
-            aria-label="Tesh Digitals home"
+            aria-label="Tesh Media home"
           >
-            <span>TESH DIGITALS</span>
+            <span>TESH MEDIA</span>
             <span className="hero-brand-tag">3D HERO</span>
           </button>
 
@@ -835,7 +835,7 @@ export default function App() {
         <div className="hero-stage">
           <div className="hero-headline-wrapper">
             <h2 className="hero-headline" ref={heroHeadlineRef}>
-              TESH DIGITALS
+              TESH MEDIA
             </h2>
           </div>
 
@@ -941,7 +941,7 @@ export default function App() {
         aria-label="Next Template Transition Area"
       >
         <div className="next-template-content">
-          <span className="next-template-badge">TESH DIGITALS — TEMPLATE TRANSITION</span>
+          <span className="next-template-badge">TESH MEDIA — TEMPLATE TRANSITION</span>
           <h2 className="next-template-title">SEQUENCE ACTIVATED</h2>
           <p className="next-template-desc">
             The 3D golden sphere explosion completed successfully. The transition controller is now active and ready for your next template integration.
